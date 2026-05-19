@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>414730399 猜拳器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#020205;
+  background-image: 
+    radial-gradient(circle at 50% 50%, #1a1040 0%, #020205 100%),
+    linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+  min-height:100vh;display:flex;flex-direction:column;color:#00F5FF;
+  align-items:center;justify-content:center;font-family:Arial,sans-serif;
+}
+#wrap{
+  border-radius:18px;overflow:hidden;
+  box-shadow:0 0 40px rgba(0,255,255,.3), 0 0 0 2px #00F5FF;
+}
+canvas{display:block;}
+video{display:none;} 
+#footer{margin-top:15px;color:#00F5FF;font-family:monospace;font-size:12px;text-transform:uppercase;opacity:0.6;}
+</style>
+</head>
+<body>
+<video id="vid" playsinline></video>
+<div id="wrap"><canvas id="c" width="640" height="480"></canvas></div>
+<div id="footer">✊ 石頭 &ensp; 🖐 布 &ensp; ✌️ 剪刀 &ensp;|&ensp; AI 手勢辨識猜拳 允許攝影機存取</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<script src="sketch.js"></script>
+</body>
+</html>
