@@ -67,9 +67,9 @@ function classify(l) {
     const ext = tips.map((t, i) => l[t].y < l[pips[i]].y);
     const n = ext.filter(Boolean).length;
 
-    // 靈敏度優化：改為判定拇指尖端相對於拇指基部(Landmark 2)的垂直偏移量
-    const thumbUp = l[4].y < l[2].y - 0.04;
-    const thumbDown = l[4].y > l[2].y + 0.04;
+    // 強化偵測：判定拇指尖端(4)相對於指節(3)與食指基部(5)的位置，支援正反面
+    const thumbUp = l[4].y < l[3].y - 0.015 && l[4].y < l[5].y;
+    const thumbDown = l[4].y > l[3].y + 0.015 && l[4].y > l[17].y;
 
     if (thumbUp && n === 0) return 'thumbs_up';
     if (thumbDown && n === 0) return 'thumbs_down';
@@ -404,7 +404,8 @@ function dDraw() {
 }
 
 function dMenu() {
-    g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(0, 0, W, H);
+    skel(); // 在選單狀態開啟關節追蹤
+    g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect(0, 0, W, H);
     scoreHUD();
     boldT('再玩一局？', W / 2, H / 2 - 78, 34, '#FFF');
     g.save();
@@ -420,7 +421,7 @@ function dMenu() {
     g.fillStyle = 'rgba(255,255,255,.06)'; rr(20, H / 2 + 90, W - 40, 32, 8); g.fill();
     g.font = '13px Arial'; g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillStyle = 'rgba(255,255,255,.45)';
-    g.fillText('💡 比出 👍 🎮 繼續遊戲  ·  比出 👎 🏠 結束遊戲', W / 2, H / 2 + 106); g.restore();
+    g.fillText('💡 比出 👍  繼續遊戲  ·  比出 👎  結束遊戲', W / 2, H / 2 + 106); g.restore();
 
     // 繪製選單手勢進度條
     if (st === 'menu' && (stable === 'thumbs_up' || stable === 'thumbs_down')) {
