@@ -67,10 +67,9 @@ function classify(l) {
     const ext = tips.map((t, i) => l[t].y < l[pips[i]].y);
     const n = ext.filter(Boolean).length;
 
-    // 偵測比讚 (Thumbs Up): 拇指尖端明顯高於手掌中心與其餘關節
-    const thumbUp = l[4].y < l[3].y && l[4].y < l[2].y && l[4].y < l[5].y;
-    // 偵測倒讚 (Thumbs Down): 拇指尖端明顯低於其餘關節
-    const thumbDown = l[4].y > l[3].y && l[4].y > l[2].y && l[4].y > l[17].y;
+    // 靈敏度優化：改為判定拇指尖端相對於拇指基部(Landmark 2)的垂直偏移量
+    const thumbUp = l[4].y < l[2].y - 0.04;
+    const thumbDown = l[4].y > l[2].y + 0.04;
 
     if (thumbUp && n === 0) return 'thumbs_up';
     if (thumbDown && n === 0) return 'thumbs_down';
@@ -319,7 +318,7 @@ function dIdle() {
         g.fillText(LB[stable], W - 75, 32); g.restore();
     }
     const gr = g.createLinearGradient(0, H - 148, 0, H);
-    gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(10,5,30,.95)');
+    gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(10,5,30,.4)');
     g.fillStyle = gr; g.fillRect(0, H - 148, W, 148);
 
     if (!lm) {
@@ -348,9 +347,9 @@ function dCountdown() {
     g.save(); g.translate(W / 2, H / 2); g.scale(pulse, pulse);
     g.font = 'bold 118px Arial'; g.textAlign = 'center'; g.textBaseline = 'middle';
     g.shadowColor = col; g.shadowBlur = 45; g.fillStyle = col; g.fillText(sc, 0, 0); g.restore();
-    g.fillStyle = 'rgba(0,0,0,.65)'; g.fillRect(0, 0, W, 68);
+    g.fillStyle = 'rgba(0,0,0,.3)'; g.fillRect(0, 0, W, 68);
     boldT(`你出：${EM[pG] || '？'} ${LB[pG] || '？'}`, W / 2, 34, 22, '#FFF');
-    g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(0, H - 50, W, 50);
+    g.fillStyle = 'rgba(0,0,0,.2)'; g.fillRect(0, H - 50, W, 50);
     const dots = '.'.repeat(Math.floor(el / 380) % 4);
     smT(`電腦正在思考${dots}`, W / 2, H - 25, 15);
 }
@@ -358,9 +357,9 @@ function dCountdown() {
 function dReveal() {
     const el = Date.now() - stAt;
     const cpuA = Math.min(1, Math.max(0, (el - 400) / 500));
-    g.fillStyle = 'rgba(0,0,0,.7)'; g.fillRect(0, 0, W, H);
-    g.fillStyle = 'rgba(20,70,200,.3)'; g.fillRect(0, 0, W / 2 - 2, H);
-    g.fillStyle = 'rgba(200,20,20,.3)'; g.fillRect(W / 2 + 2, 0, W / 2 - 2, H);
+    g.fillStyle = 'rgba(0,0,0,.2)'; g.fillRect(0, 0, W, H);
+    g.fillStyle = 'rgba(20,70,200,.15)'; g.fillRect(0, 0, W / 2 - 2, H);
+    g.fillStyle = 'rgba(200,20,20,.15)'; g.fillRect(W / 2 + 2, 0, W / 2 - 2, H);
     boldT('你', W / 4, 36, 20, '#AAD4FF');
     boldT('電腦', W * 3 / 4, 36, 20, '#FFAAAA');
     boldT('VS', W / 2, H / 2, 38, '#FFF', null, '#FFF');
@@ -385,10 +384,10 @@ function dWin() {
 function dLose() {
     const el = Date.now() - stAt;
     maskP = Math.min(1, el / 700);
-    g.fillStyle = `rgba(140,0,0,${maskP * .35})`; g.fillRect(0, 0, W, H);
+    g.fillStyle = `rgba(140,0,0,${maskP * .15})`; g.fillRect(0, 0, W, H);
     drawMask(W * .72, H * .42, maskP);
     scoreHUD();
-    g.fillStyle = 'rgba(0,0,0,.72)'; g.fillRect(0, 0, W, 88);
+    g.fillStyle = 'rgba(0,0,0,.3)'; g.fillRect(0, 0, W, 88);
     const sh = el < 800 ? Math.sin(el / 38) * 4 : 0;
     boldT('😢 你輸了！', W / 2 + sh, 44, 44, '#FF2222', '#000', '#FF2222');
     g.fillStyle = 'rgba(0,0,0,.65)'; g.fillRect(0, H - 76, W, 76);
@@ -405,7 +404,7 @@ function dDraw() {
 }
 
 function dMenu() {
-    g.fillStyle = 'rgba(0,0,0,.78)'; g.fillRect(0, 0, W, H);
+    g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(0, 0, W, H);
     scoreHUD();
     boldT('再玩一局？', W / 2, H / 2 - 78, 34, '#FFF');
     g.save();
@@ -500,12 +499,8 @@ function update() {
 }
 
 function onClk(e) {
-    if (st !== 'menu') return;
-    const r = cv.getBoundingClientRect();
-    const cx = e.clientX - r.left, cy = e.clientY - r.top;
-    const bw = 132, bh = 52, by = H / 2 + 24;
-    if (cx >= W / 2 + 8 && cx <= W / 2 + 8 + bw && cy >= by && cy <= by + bh) startGame(); // 右鍵：繼續
-    if (cx >= W / 2 - bw - 8 && cx <= W / 2 - 8 && cy >= by && cy <= by + bh) enter('ended'); // 左鍵：結束
+    // 已移除滑鼠點擊功能，強制使用 AI 手勢控制
+    return false;
 }
 function startGame() {
     parts = []; maskP = 0; gBuf = []; stable = null;
