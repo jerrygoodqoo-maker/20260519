@@ -26,8 +26,8 @@ let pG = null, cG = null;         // player / cpu gesture
 let lm = null, stable = null, handedness = null; // landmarks, gesture, side
 let gBuf = [], holdT = null;      // gesture buffer, hold-start time
 let menuHoldT = null;             // 選單專用計時器
-const BUF = 10, HOLD = 400, CD = 3;
-const MENU_HOLD = 4000;            // 選單觸發改為 4 秒
+const BUF = 10, HOLD = 1500, CD = 3;
+const MENU_HOLD = 1500;            // 偵測時間統一改為 1.5 秒
 
 let score = { w: 0, l: 0, d: 0 };
 let parts = [], fwI = null, maskP = 0;
@@ -335,7 +335,7 @@ function dIdle() {
         smT(!isValid ? '⚠️ 這是功能鍵，請比出拳手勢' : pct < 1 ? '保持手勢，即將開始...' : 'GO!', W / 2, H - 44, 13, 'rgba(255,255,255,.7)');
     } else {
         boldT('請比出石頭 / 布 / 剪刀', W / 2, H - 82, 18, '#FFD93D');
-        smT('確保手部清晰，保持手勢 0.5 秒', W / 2, H - 52, 14, 'rgba(255,255,255,.4)');
+        smT('確保手部清晰，保持手勢 1.5 秒', W / 2, H - 52, 14, 'rgba(255,255,255,.4)');
     }
 }
 
@@ -413,7 +413,7 @@ function dMenu() {
     g.font = '14px Arial'; g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillStyle = 'rgba(255,255,255,.5)';
     g.fillText(`✅ ${score.w}勝  ❌ ${score.l}敗  🤝 ${score.d}平`, W / 2, H / 2 - 33); g.restore();
-    smT('請保持手勢 4 秒以選擇', W / 2, H / 2 + 6, 14);
+    smT('請保持手勢 1.5 秒以選擇', W / 2, H / 2 + 6, 14);
     const bw = 132, bh = 52, by = H / 2 + 24;
     btn('👎 結束', W / 2 - bw - 8, by, bw, bh, '#CC2200'); 
     btn('👍 繼續', W / 2 + 8, by, bw, bh, '#00AA44');      
@@ -430,7 +430,7 @@ function dMenu() {
         const col = isUp ? '#00FF88' : '#FF4444';
         g.fillStyle = 'rgba(255,255,255,0.1)'; rr(W / 2 - 100, H / 2 + 132, 200, 8, 4); g.fill();
         g.fillStyle = col; rr(W / 2 - 100, H / 2 + 132, 200 * pct, 8, 4); g.fill();
-        const txt = isUp ? `🎮 保持手勢以繼續... ${Math.ceil(4 - pct * 4)}s` : `🏠 保持手勢以結束... ${Math.ceil(4 - pct * 4)}s`;
+        const txt = isUp ? `🎮 保持手勢以繼續... ${(1.5 - pct * 1.5).toFixed(1)}s` : `🏠 保持手勢以結束... ${(1.5 - pct * 1.5).toFixed(1)}s`;
         boldT(txt, W / 2, H / 2 + 158, 18, col, '#000');
     }
 }

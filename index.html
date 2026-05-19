@@ -20,7 +20,17 @@ body{
   border-radius:18px;overflow:hidden;
   box-shadow:0 0 40px rgba(0,255,255,.3), 0 0 0 2px #00F5FF;
 }
+body::after {
+  content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2; background-size: 100% 2px, 3px 100%; pointer-events: none;
+}
+@keyframes flicker {
+  0% { opacity: 0.97; } 5% { opacity: 0.95; } 10% { opacity: 0.9; } 15% { opacity: 0.95; }
+  20% { opacity: 1; } 100% { opacity: 1; }
+}
 canvas{display:block;}
+canvas{ animation: flicker 0.15s infinite; }
 video{display:none;} 
 #footer{margin-top:15px;color:#00F5FF;font-family:monospace;font-size:12px;text-transform:uppercase;opacity:0.6;}
 </style>
